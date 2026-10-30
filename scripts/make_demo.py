@@ -23,20 +23,39 @@ def make_xml():
         if day in (13, 14, 35):
             continue  # 明确的缺失，不能补零。
         base = start + timedelta(days=day)
-        s = base + timedelta(hours=1)
+        # 周六、周日醒来的夜晚晚睡 75 分钟，其余夜晚小幅波动；用于睡眠规律展示。
+        late = 1.25 if day % 7 in (5, 6) else 0
+        s = base + timedelta(hours=.6 + late + .25 * math.sin(day * 1.3))
         hours = 7.4 + .7 * math.sin(day * .4)
-        record('HKCategoryTypeIdentifierSleepAnalysis', s, s+timedelta(hours=hours),
+        wake = s + timedelta(hours=hours)
+        record('HKCategoryTypeIdentifierSleepAnalysis', s, wake,
                'HKCategoryValueSleepAnalysisAsleepCore')
+        # 第 40—42 天构造一段多项信号同时偏离个人基线的虚构日子。
+        episode = day in (40, 41, 42)
+        for typ, val, unit, t in [
+            ('RespiratoryRate', round(15 + .4*math.sin(day*.2) + (3 if episode else 0), 1), 'count/min', s+timedelta(hours=2)),
+            ('AppleSleepingWristTemperature', round(34.6 + .08*math.sin(day*.5) + (.7 if episode else 0), 2), 'degC', s),
+            ('AppleSleepingBreathingDisturbances', 18 if day == 22 else 4 + day % 3, 'count', s),
+        ]:
+            record('HKQuantityTypeIdentifier'+typ, t, t, val, unit)
+        worn = range(9, 13) if day == 30 else [h for h in range(24) if h != 8]
+        for h in worn:
+            t = base + timedelta(hours=h, minutes=10)
+            record('HKQuantityTypeIdentifierHeartRate', t, t, 60 + (h*7 + day) % 35, 'count/min')
+        steps = 1200 if day == 30 else 1500 if day == 50 else 6000+(day*631)%5000
         for typ, val, unit in [
-            ('RestingHeartRate', round(63 + 3*math.sin(day*.3), 1), 'count/min'),
-            ('HeartRateVariabilitySDNN', round(44+8*math.sin(day*.2), 1), 'ms'),
-            ('RespiratoryRate', round(15+math.sin(day*.2), 1), 'count/min'),
-            ('StepCount', 6000+(day*631)%5000, 'count'),
+            ('RestingHeartRate', round(63 + 1.5*math.sin(day*.3) + (9 if episode else 0), 1), 'count/min'),
+            ('HeartRateVariabilitySDNN', round(44+4*math.sin(day*.2) - (18 if episode else 0), 1), 'ms'),
+            ('WalkingHeartRateAverage', round(104 - .1*day + 2*math.sin(day*.7), 1), 'count/min'),
+            ('StepCount', steps, 'count'),
             ('AppleExerciseTime', 15+(day*7)%40, 'min'),
             ('ActiveEnergyBurned', 200+(day*17)%180, 'kcal'),
         ]:
             record('HKQuantityTypeIdentifier'+typ, base+timedelta(hours=9),
                    base+timedelta(hours=20), val, unit)
+        if day % 7 == 3:
+            t = base + timedelta(hours=18)
+            record('HKQuantityTypeIdentifierVO2Max', t, t, round(40 + .04*day, 1), 'mL/min·kg')
         for h in (2,4,6):
             oxygen = .97 if (day+h)%3 else .96
             if day == 22 and h == 4: oxygen = .89

@@ -16,6 +16,9 @@ import xml.etree.ElementTree as ET
 import zipfile
 from zoneinfo import ZoneInfo
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from cross import build_cross, cross_findings  # noqa: E402
+
 Q = 'HKQuantityTypeIdentifier'
 SLEEP = 'HKCategoryTypeIdentifierSleepAnalysis'
 # id, label, canonical unit, aggregation, accepted units / conversion factors
@@ -436,7 +439,16 @@ def make_findings(data, selected, sleep_intervals, end_date):
         complete = [r for r in steps if start < r['date'] < end_date.isoformat()]
         if complete:
             vals = [r['value'] for r in complete]
-            add('info', '活动：记录少不一定等于活动少', f'最近 90 天内排除所选来源起始日及数据末日，有 {len(vals)} 个记录日，平均 {mean(vals):,.0f} 步，{sum(v<2000 for v in vals)} 日少于 2,000 步。2,000 步只是描述性分组，不是医疗阈值。没有全天佩戴证据；缺失日期不当作零，不把手机与手表相加。', 'steps')
+            wear = {r['date']: r['value'] for r in by_id.get('wear_hours', {}).get('rows', [])}
+            low = [r for r in complete if r['value'] < 2000]
+            split = ''
+            if wear and low:
+                worn = sum(wear.get(r['date'], 0) >= 12 for r in low)
+                none = sum(r['date'] not in wear for r in low)
+                split = f'按当天心率采样覆盖拆分：{worn} 日覆盖 ≥12 小时（手表大概率戴着，确实走得少），{len(low)-worn-none} 日覆盖不足 12 小时，{none} 日没有心率采样（可能没戴表）。'
+            add('info', '活动：记录少不一定等于活动少', f'最近 90 天内排除所选来源起始日及数据末日，有 {len(vals)} 个记录日，平均 {mean(vals):,.0f} 步，{len(low)} 日少于 2,000 步。{split}2,000 步只是描述性分组，不是医疗阈值；心率采样覆盖只是佩戴的粗略线索。缺失日期不当作零，不把手机与手表相加。', 'steps')
+    if data.get('cross'):
+        cross_findings(data['cross'], by_id, end_date, add)
     if by_id.get('breathing_disturbances'):
         add('quality','呼吸紊乱低数值不能排除睡眠呼吸暂停', '设备呼吸紊乱指标不等于临床 AHI；未见通知记录也不证明没有疾病或通知功能已经开启。结合症状、设备适用范围与规范睡眠监测判断。','breathing_disturbances')
     return findings
@@ -485,6 +497,15 @@ def analyze(path, timezone_name=None, config=None, max_bytes=2_000_000_000):
             metrics.append({**primary, 'default_source': aliases[chosen],
                             'source_series': {alias: group[m_id]['rows'] if m_id in group else []
                                               for alias, group in variants.items()}})
+    by_id = {m['id']: m for m in metrics}
+    cross, derived = build_cross(by_id, selected, by_id.get('sleep', {}).get('rows', []), sleep_intervals, end_date)
+    origin = {'spo2_sleep_min': 'spo2', 'respiratory_sleep': 'respiratory', 'sleep_midpoint': 'sleep',
+              'sri': 'sleep', 'wear_hours': 'heart_rate'}
+    for m in derived:
+        alias = source_choices.get(origin[m['id']], {}).get('selected', '未知来源')
+        for r in m['rows']:
+            r['source'] = alias
+        metrics.append({**m, 'default_source': alias, 'source_series': {alias: m['rows']}})
     order = ['sleep','spo2_min','spo2','resting_hr','hrv','hrv_rmssd','respiratory','steps','exercise','active_energy','vo2','heart_rate']
     metrics.sort(key=lambda m: order.index(m['id']) if m['id'] in order else len(order))
     by_type = defaultdict(lambda: [0,0.0])
@@ -555,7 +576,7 @@ def analyze(path, timezone_name=None, config=None, max_bytes=2_000_000_000):
             'inventory': [{'type': k, 'count': v} for k,v in inventory.most_common()],
             'workouts': {'count': len(workouts), 'minutes': round(sum(w[3] for w in workouts),2),
                          'by_type': [{'type': k, 'count': v[0], 'minutes': round(v[1],2)} for k,v in by_type.items()]},
-            'sources': config.get('references', []), 'issues': dict(issues)}
+            'sources': config.get('references', []), 'issues': dict(issues), 'cross': cross}
     core_dates = [r['date'] for m in metrics if m['id'] in ('sleep', 'resting_hr', 'spo2')
                   for r in m['rows'] if r['date'] >= (end_date-timedelta(days=89)).isoformat()]
     data['meta']['focus_start'] = min(core_dates) if core_dates else max(first.date(), end_date-timedelta(days=29)).isoformat()

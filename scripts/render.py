@@ -142,6 +142,8 @@ th{color:var(--secondary);font-weight:600}td:first-child,th:first-child{white-sp
 .empty{padding:12px 0;margin:0;font-size:12px;color:var(--secondary)}
 .card.no-data{box-shadow:none;background:transparent;border-style:dashed}
 .coverage-panel{grid-column:1/-1;padding:18px;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
+.cross-panel{grid-column:1/-1;min-width:0;padding:18px;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}.cross-panel h2{font-size:16px}.cross-intro{grid-column:1/-1;margin:0}
+.cross-grid{display:block;width:100%;height:auto;margin:6px 0 4px}.cross-grid text.grid-label{fill:var(--secondary);font-size:11px;font-variant-numeric:tabular-nums}
 .coverage-panel>a{display:inline-block;margin:0 0 10px;font-size:12px}
 .coverage-counts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0}
 .coverage-counts>div{border:1px solid var(--line);padding:10px;border-radius:10px}
@@ -166,7 +168,7 @@ footer{border-top:1px solid var(--line);margin-top:22px;padding-top:14px;font-si
 @media(max-width:1050px){.chart-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.findings{grid-template-columns:1fr 1fr}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:700px){main{padding:18px 14px 30px}h1{font-size:23px}.brand-mark{width:38px;height:38px;border-radius:12px}.actions{gap:5px}.actions button{font-size:11px;padding:5px 8px}
 .wordmark{display:none}.attention-bar{flex-wrap:wrap;row-gap:4px}.attention-bar .attention-text{flex:1 1 100%;order:3}.attention-link{margin-left:auto}.kpi .delta{white-space:normal;border-radius:10px}.brand-mark{display:none}.period{font-size:11px}.filters{top:4px;gap:8px}.filter-hint{margin-left:0}.kpis{gap:8px}.kpi{padding:12px}.kpi-value{font-size:26px}
-.chart-grid,.findings,.details-grid{grid-template-columns:1fr}.coverage-counts{grid-template-columns:repeat(2,minmax(0,1fr))}.facts{grid-template-columns:95px minmax(0,1fr)}.custom input{max-width:155px}}
+.chart-grid,.findings,.details-grid{grid-template-columns:minmax(0,1fr)}.coverage-counts{grid-template-columns:repeat(2,minmax(0,1fr))}.facts{grid-template-columns:95px minmax(0,1fr)}.custom input{max-width:155px}}
 @media(forced-colors:active){.trace,.spark-line{stroke:CanvasText}.trace.daily{stroke:GrayText;stroke-opacity:1}.area,.spark-area{display:none}.dot{fill:CanvasText;stroke:Canvas}.crosshair,.grid{stroke:CanvasText}.end-label{stroke:Canvas}.status-mark,.metric-key,.tabs button::before,.card-head h3::before{border:2px solid CanvasText}.brand-mark{border:1px solid CanvasText}}
 @media print{:root,:root[data-theme=dark]{color-scheme:light;--page:#fff;--surface:#fff;--ink:#000;--secondary:#444;--line:#ccc;--wash:#eee;--shadow:none;
 --hue-sleep:#4a3aa7;--hue-heart:#e34948;--hue-activity:#1baf7a;--hue-mobility:#eb6834;--hue-audio:#2a78d6;--hue-body:#e87ba4}
@@ -198,7 +200,7 @@ body::before{display:none}main{max-width:none;padding:0}.actions,.filters,.skip,
 <section id="about" class="about" aria-labelledby="about-title">
   <div class="about-head"><h2 id="about-title">解读与方法</h2><span id="fixed-period" class="fixed-label"></span></div>
   <div id="findings" class="findings"></div>
-  <details class="provenance" id="methodology"><summary>完整导出与来源选择 <span id="inventory-summary" class="muted"></span></summary><div class="details-body"><div id="full-coverage"></div><div class="details-grid"><section><h3>来源与处理</h3><dl class="facts" id="meta"></dl><h3>如何阅读</h3><ul><li>每条曲线只使用一个纵轴；纵轴随数据范围调整，非健康阈值。</li><li>日值沿用输入：sum 表示当日累计量，median 表示当日中位数，min 表示最低采样。主睡眠另以最长会话实睡时长定义。</li><li>逐日视图中，细线是日值，粗线是 7 日均线：截至当天的 7 个日历天内有记录日的日值均值，至少 4 天有记录才绘制，不补缺失日。最低血氧不画均线；周／月视图本身已是均值，不再叠加。</li><li>长时间段按周或月展示有记录日的日值均值，不累计跨月总量；最低采样指标保留区间最低值。均值不是原始样本加权均值。缺失日不补零、不插值；曲线在缺失处断开。</li><li>指标卡的“近 7 天 · 前 7 天”只对比有记录日均值，不判断好坏；累计指标遇到可能不完整的导出末日时整体前移一天。</li><li>覆盖率＝有有效日值的天数 / 筛选区间日历天数。n 为上游提供的样本量，不等同于佩戴时长；缺失的 n 不推算。</li><li>来源与佩戴方式变化可能影响可比性；关联不代表因果。睡眠按上游定义归属日期，本报告不重建睡眠区间。</li></ul></section><section><h3>数据质量</h3><ul id="quality"></ul><h3>导出清单与运动记录</h3><div id="inventory"></div><div id="workouts"></div><h3>参考来源</h3><ol id="sources" class="source-list"></ol></section></div></div></details>
+  <details class="provenance" id="methodology"><summary>完整导出与来源选择 <span id="inventory-summary" class="muted"></span></summary><div class="details-body"><div id="full-coverage"></div><div class="details-grid"><section><h3>来源与处理</h3><dl class="facts" id="meta"></dl><h3>如何阅读</h3><ul><li>每条曲线只使用一个纵轴；纵轴随数据范围调整，非健康阈值。</li><li>日值沿用输入：sum 表示当日累计量，median 表示当日中位数，min 表示最低采样。主睡眠另以最长会话实睡时长定义。</li><li>逐日视图中，细线是日值，粗线是 7 日均线：截至当天的 7 个日历天内有记录日的日值均值，至少 4 天有记录才绘制，不补缺失日。最低血氧不画均线；周／月视图本身已是均值，不再叠加。</li><li>长时间段按周或月展示有记录日的日值均值，不累计跨月总量；最低采样指标保留区间最低值。均值不是原始样本加权均值。缺失日不补零、不插值；曲线在缺失处断开。</li><li>指标卡的“近 7 天 · 前 7 天”只对比有记录日均值，不判断好坏；累计指标遇到可能不完整的导出末日时整体前移一天。</li><li>交叉观察只用默认来源，所有偏离都相对自己的基线：当天前第 3—30 天的中位数，按稳健离散度（1.4826×MAD，并设最小值）衡量，至少 2 倍才计为偏离，基线不足 14 天不计算。夜间指标按主睡眠窗口归属到醒来日。</li><li>覆盖率＝有有效日值的天数 / 筛选区间日历天数。n 为上游提供的样本量，不等同于佩戴时长；缺失的 n 不推算。</li><li>来源与佩戴方式变化可能影响可比性；关联不代表因果。睡眠按上游定义归属日期，本报告不重建睡眠区间。</li></ul></section><section><h3>数据质量</h3><ul id="quality"></ul><h3>导出清单与运动记录</h3><div id="inventory"></div><div id="workouts"></div><h3>参考来源</h3><ol id="sources" class="source-list"></ol></section></div></div></details>
   <p class="caveat">本报告仅用于个人记录整理与趋势观察，不提供诊断、风险评分或治疗建议。可穿戴设备测量不能替代临床检查；如有不适或持续异常，请咨询合格医疗专业人员。参考来源由输入数据提供，本渲染器不联网核验。</p>
 </section>
 <footer>本地生成 · 单文件离线报告 · 无远程字体、脚本、网络请求或遥测。图表可使用左右方向键逐点阅读，Home / End 跳到首末点；原始日值见各卡片的数据表。打印保留当前筛选范围，日表仅打印已展开的当前页。</footer>
@@ -220,6 +222,9 @@ const $=id=>document.getElementById(id);
 const text=v=>v===undefined||v===null||v===''?'未提供':typeof v==='object'?JSON.stringify(v):String(v);
 const numeric=v=>typeof v==='number'&&Number.isFinite(v);
 const fmt=(v,d=1)=>numeric(v)?v.toLocaleString('zh-CN',{maximumFractionDigits:d}):'—';
+// Clock-time metrics store hours around midnight (23:30 = -0.5) and display as HH:MM.
+const clock=v=>{if(!numeric(v))return '—';const t=Math.round(((v%24)+24)%24*60)%1440;return String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');};
+const vfmt=(m,v,d=1)=>m&&m.format==='clock'?clock(v):fmt(v,d);
 function el(tag,content,cls){const e=document.createElement(tag);if(content!==undefined)e.textContent=text(content);if(cls)e.className=cls;return e;}
 function day(v){if(typeof v!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(v))return null;const t=Date.parse(v+'T00:00:00Z');return Number.isFinite(t)&&new Date(t).toISOString().slice(0,10)===v?t:null;}
 const iso=t=>new Date(t).toISOString().slice(0,10);
@@ -355,7 +360,7 @@ function tableView(rows,m){
  let initialized=false,page=0;const size=20,wrap=el('div',undefined,'table-scroll'),table=el('table');table.append(el('caption','筛选范围内的日值，按日期倒序；min / max 为上游日内范围。'));
  const head=el('thead'),tr=el('tr');['日期','日值 ('+(m.unit||'未标单位')+')','n','min','max','来源'].forEach(t=>{const th=el('th',t);th.scope='col';tr.append(th);});head.append(tr);const body=el('tbody');table.append(head,body);wrap.append(table);
  const nav=el('div',undefined,'pagination'),prev=el('button','上一页'),next=el('button','下一页'),info=el('span');prev.type=next.type='button';info.setAttribute('aria-live','polite');nav.append(prev,info,next);
- function draw(){body.replaceChildren();const count=Math.max(1,Math.ceil(rows.length/size));page=Math.max(0,Math.min(page,count-1));rows.slice(Math.max(0,rows.length-(page+1)*size),rows.length-page*size).reverse().forEach(r=>{const row=el('tr');[r.date,fmt(r.value,2),numeric(r.n)?fmt(r.n,0):'未知',fmt(r.min,2),fmt(r.max,2),text(r.source)].forEach(v=>row.append(el('td',v)));body.append(row);});info.textContent=(page+1)+' / '+count+' 页 · 每页 '+size+' 天';prev.disabled=page===0;next.disabled=page===count-1;}
+ function draw(){body.replaceChildren();const count=Math.max(1,Math.ceil(rows.length/size));page=Math.max(0,Math.min(page,count-1));rows.slice(Math.max(0,rows.length-(page+1)*size),rows.length-page*size).reverse().forEach(r=>{const row=el('tr');[r.date,vfmt(m,r.value,2),numeric(r.n)?fmt(r.n,0):'未知',vfmt(m,r.min,2),vfmt(m,r.max,2),text(r.source)].forEach(v=>row.append(el('td',v)));body.append(row);});info.textContent=(page+1)+' / '+count+' 页 · 每页 '+size+' 天';prev.disabled=page===0;next.disabled=page===count-1;}
  prev.onclick=()=>{page--;draw();};next.onclick=()=>{page++;draw();};details.addEventListener('toggle',()=>{if(details.open&&!initialized){initialized=true;details.append(wrap,nav);draw();}});return details;
 }
 function aggregate(rows,span,kind){
@@ -411,7 +416,7 @@ function chart(rows,m,start,end,ma){
  const rawStep=(high-low)/4,power=10**Math.floor(Math.log10(rawStep)),ratio=rawStep/power,step=(ratio<=1?1:ratio<=2?2:ratio<=5?5:10)*power;
  low=Math.floor(low/step)*step;high=Math.ceil(high/step)*step;if(values.every(v=>v>=0))low=Math.max(0,low);
  const x=t=>L+(end===start?PW/2:(t-start)/(end-start)*PW),y=v=>T+(high-v)/(high-low)*PH;
- for(let i=0;i<=10;i++){const value=low+i*step;if(value>high+step*.01)break;const yy=y(value);node('line',{x1:L,x2:W-R,y1:yy,y2:yy,class:'grid'});node('text',{x:L-10,y:yy+4,'text-anchor':'end'},fmt(value,Math.min(6,Math.max(0,-Math.floor(Math.log10(step))))));}
+ for(let i=0;i<=10;i++){const value=low+i*step;if(value>high+step*.01)break;const yy=y(value);node('line',{x1:L,x2:W-R,y1:yy,y2:yy,class:'grid'});node('text',{x:L-10,y:yy+4,'text-anchor':'end'},vfmt(m,value,Math.min(6,Math.max(0,-Math.floor(Math.log10(step))))));}
  const ticks=span<=1?[start]:W<420?[start,end]:[start,start+(end-start)/2,end];ticks.forEach((t,i)=>node('text',{x:x(t),y:H-15,'text-anchor':i===0?'start':i===ticks.length-1?'end':'middle'},iso(t)));
  const mainRuns=runs(points,x,y,p=>p.value),maRuns=showMA?runs(points,x,y,maOf):[];
  const fillRuns=showMA?maRuns:mainRuns,gid=gradient(svg);
@@ -420,7 +425,7 @@ function chart(rows,m,start,end,ma){
  if(showMA)node('path',{d:linePath(maRuns),class:'trace ma'});
  // One path for markers keeps even a very sparse multi-year series inexpensive.
  let dots='';points.forEach((p,i)=>{const isolated=(!points[i-1]||p.first-points[i-1].last!==DAY)&&(!points[i+1]||points[i+1].first-p.last!==DAY);if(points.length<=24||isolated||i===points.length-1){const xx=x(p.t),yy=y(p.value);dots+=`M ${xx-4} ${yy} a 4 4 0 1 0 8 0 a 4 4 0 1 0 -8 0 `;}});node('path',{d:dots,class:'dot'+(showMA?' daily-dot':'')});
- const last=points[points.length-1];node('text',{x:x(last.t),y:Math.max(15,y(last.value)-12),'text-anchor':x(last.t)>W/2?'end':'start',class:'end-label'},fmt(last.value,1));
+ const last=points[points.length-1];node('text',{x:x(last.t),y:Math.max(15,y(last.value)-12),'text-anchor':x(last.t)>W/2?'end':'start',class:'end-label'},vfmt(m,last.value,1));
  const cross=node('line',{x1:0,x2:0,y1:T,y2:H-B,class:'crosshair',visibility:'hidden'}),focus=node('circle',{r:5,class:'dot',visibility:'hidden'});
  const tip=el('div',undefined,'tooltip');tip.hidden=true;const valueEl=el('strong'),dateEl=el('p'),maEl=el('p',undefined,'tip-ma'),nEl=el('p'),sourceEl=el('p');tip.append(valueEl,dateEl,maEl,nEl,sourceEl);const live=el('p',undefined,'sr-only');live.setAttribute('aria-live','polite');live.textContent='悬停 / 触摸查看；聚焦图表后用左右方向键逐点阅读。';
  let selected=points.length-1;
@@ -430,10 +435,10 @@ function chart(rows,m,start,end,ma){
    const date = p.first === p.last ? iso(p.first) : iso(p.first)+' — '+iso(p.last);
    cross.setAttribute('x1', xx); cross.setAttribute('x2', xx); cross.setAttribute('visibility', 'visible');
    focus.setAttribute('cx', xx); focus.setAttribute('cy', yy); focus.setAttribute('visibility', 'visible');
-   valueEl.textContent = fmt(p.value, 2)+' '+m.unit;
+   valueEl.textContent = vfmt(m, p.value, 2)+' '+m.unit;
    dateEl.textContent = date+' · '+(mode === 'day' ? '日值' : p.rows.length+' 个记录日的'+(m.kind === 'min' ? '最低值' : '均值'));
    maEl.hidden = !showMA;
-   maEl.textContent = '7 日均线 '+(numeric(avg) ? fmt(avg, 2)+' '+m.unit : '不足 '+MA_MIN+' 个记录日');
+   maEl.textContent = '7 日均线 '+(numeric(avg) ? vfmt(m, avg, 2)+' '+m.unit : '不足 '+MA_MIN+' 个记录日');
    nEl.textContent = 'n = '+p.n;
    sourceEl.textContent = '来源：'+p.source;
    tip.hidden = false;
@@ -465,15 +470,16 @@ function chart(rows,m,start,end,ma){
 }
 const categories = [
   {id:'overview', label:'概览', ids:['sleep','spo2_min','resting_hr','steps','hrv','respiratory']},
-  {id:'sleep', label:'睡眠', ids:['sleep','sleep_total','sleep_unspecified','sleep_core','sleep_deep','sleep_rem','sleep_awake','sleep_goal','wrist_temp','breathing_disturbances']},
-  {id:'heart', label:'心脏与呼吸', ids:['resting_hr','heart_rate','walking_hr','hr_recovery','hrv','hrv_rmssd','spo2_min','spo2','respiratory']},
-  {id:'activity', label:'活动与训练', ids:['steps','exercise','active_energy','basal_energy','distance','vo2','daylight','flights','stand_time','stand_hours','physical_effort','workout_effort','workout_minutes','workout_sessions','mindful']},
+  {id:'sleep', label:'睡眠', ids:['sleep','sleep_total','sleep_unspecified','sleep_core','sleep_deep','sleep_rem','sleep_awake','sleep_goal','wrist_temp','breathing_disturbances','sleep_midpoint','sri']},
+  {id:'heart', label:'心脏与呼吸', ids:['resting_hr','heart_rate','walking_hr','hr_recovery','hrv','hrv_rmssd','spo2_min','spo2','respiratory','spo2_sleep_min','respiratory_sleep']},
+  {id:'activity', label:'活动与训练', ids:['steps','exercise','active_energy','basal_energy','distance','vo2','daylight','flights','stand_time','stand_hours','physical_effort','workout_effort','workout_minutes','workout_sessions','mindful','wear_hours']},
   {id:'mobility', label:'步态与移动', ids:['walking_speed','step_length','six_min_walk','stair_ascent','stair_descent','double_support','walking_asymmetry','walking_steadiness']},
   {id:'audio', label:'声音', ids:['environment_audio','headphone_audio','sound_reduction']},
   {id:'body', label:'身体', ids:['weight','height']},
+  {id:'cross', label:'交叉观察', ids:['spo2_sleep_min','respiratory_sleep','sleep_midpoint','sri','wear_hours']},
   {id:'coverage', label:'数据覆盖', ids:[]},
 ];
-const topical = categories.filter(c => !['overview','coverage'].includes(c.id));
+const topical = categories.filter(c => !['overview','coverage','cross'].includes(c.id));
 let activeCategory = 'overview';
 let currentRange = null;
 function inCategory(m, category) {
@@ -498,7 +504,7 @@ function summaryValue(m, rows) {
 }
 // Neutral comparison of the last two 7-day windows; no good/bad colouring.
 function recentDelta(m, rows, start, end) {
-  if (m.kind === 'min' || !rows.length) return null;
+  if (m.kind === 'min' || m.format === 'clock' || !rows.length) return null;
   const anchor = cumulativeOf(m) && end === fullEnd ? end-DAY : end;
   const pick = (from, to) => rows.filter(r => r.t > from && r.t <= to);
   const now = pick(anchor-MA_DAYS*DAY, anchor), before = pick(anchor-2*MA_DAYS*DAY, anchor-MA_DAYS*DAY);
@@ -571,6 +577,156 @@ function renderCoverage(slices, days) {
   }
   table.append(head, body); scroll.append(table); panel.append(scroll); $('charts').append(panel);
 }
+// ---- Cross-signal observations (default sources, current date filter) ----
+const cross = obj(data.cross), crossParams = obj(cross.params);
+const crossSignals = arr(cross.signals).map(obj), crossDays = arr(cross.days).map(obj), crossNights = arr(cross.nights).map(obj);
+const signalHue = {resting_hr:'heart', hrv:'heart', respiratory:'heart', wrist_temp:'sleep', sleep:'sleep'};
+const signalUnit = {resting_hr:'次／分', hrv:'ms', respiratory:'次／分', wrist_temp:'℃', sleep:'小时'};
+const median = vs => { if (!vs.length) return null; const s = [...vs].sort((a, b) => a-b), k = Math.floor(s.length/2); return s.length%2 ? s[k] : (s[k-1]+s[k])/2; };
+const sd = vs => { if (vs.length < 2) return null; const a = vs.reduce((s, v) => s+v, 0)/vs.length; return Math.sqrt(vs.reduce((s, v) => s+(v-a)**2, 0)/vs.length); };
+const isoClock = s => { const h = Number(String(s).slice(11, 13))+Number(String(s).slice(14, 16))/60; return h >= 18 ? h-24 : h; };
+const zText = z => numeric(z) ? (z > 0 ? '+' : '')+fmt(z, 1)+' 倍' : '—';
+const within = (d, start, end) => { const t = day(d); return t !== null && t >= start && t <= end; };
+function crossPanel(title, note) {
+  const panel = el('section', undefined, 'cross-panel');
+  panel.append(el('h2', title)); if (note) panel.append(el('p', note, 'chart-note'));
+  $('charts').append(panel); return panel;
+}
+function tiles(panel, items) {
+  const box = el('div', undefined, 'coverage-counts');
+  for (const [value, label] of items) { const t = el('div'); t.append(el('strong', value), el('small', label)); box.append(t); }
+  panel.append(box);
+}
+function simpleTable(panel, caption, headers, rows) {
+  const scroll = el('div', undefined, 'table-scroll'), table = el('table', undefined, 'coverage-table');
+  table.append(el('caption', caption));
+  const head = el('thead'), tr = el('tr'), body = el('tbody');
+  headers.forEach(h => { const th = el('th', h); th.scope = 'col'; tr.append(th); });
+  head.append(tr);
+  rows.forEach(cells => { const row = el('tr'); cells.forEach(c => row.append(el('td', c))); body.append(row); });
+  table.append(head, body); scroll.append(table); panel.append(scroll);
+}
+function deviationPanel(start, end, days) {
+  const panel = crossPanel('多信号同时偏离个人基线', '每格一天。彩色＝该信号偏离自己的基线（当天前第 3—30 天的中位数）达到 '+fmt(crossParams.z)+' 倍稳健离散度；浅灰＝有数据但未偏离；空白＝无数据或基线不足 '+text(crossParams.baseline_min)+' 天。顶行标出 2 项及以上同时偏离的日子。饮酒、旅行、训练、作息、压力和生理周期也会造成同样的偏离。');
+  if (!crossSignals.length) { panel.append(el('p', '缺少可计算个人基线的信号。', 'empty')); return; }
+  const byDate = new Map(crossDays.map(d => [d.date, d]));
+  const W = 1000, L = 104, R = 8, T = 6, rowH = 20, rows = crossSignals.length+1, H = T+rows*rowH+22;
+  const cw = (W-L-R)/days, svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('class', 'cross-grid'); svg.setAttribute('role', 'img');
+  svg.setAttribute('aria-label', '多信号偏离日历；明细见下方表格');
+  const labels = [['同时偏离 ≥2', null], ...crossSignals.map(s => [s.label, s.id])];
+  labels.forEach(([label], i) => svgNode(svg, 'text', {x:L-8, y:T+i*rowH+14, 'text-anchor':'end', class:'grid-label'}, label));
+  for (let k = 0; k < days; k++) {
+    const date = iso(start+k*DAY), rec = byDate.get(date), x = L+k*cw, w = Math.max(cw-1, .6);
+    if (rec && rec.count >= 2) {
+      const cell = svgNode(svg, 'rect', {x, y:T+2, width:w, height:rowH-4, rx:2, fill:'var(--warning)'});
+      svgNode(cell, 'title', {}, date+' · '+rec.count+' 项同时偏离');
+    }
+    crossSignals.forEach((s, i) => {
+      const v = rec && obj(rec.signals)[s.id];
+      if (!v) return;
+      const cell = svgNode(svg, 'rect', {x, y:T+(i+1)*rowH+2, width:w, height:rowH-4, rx:2,
+        fill:v.flag ? 'var(--hue-'+signalHue[s.id]+')' : 'var(--wash)'});
+      svgNode(cell, 'title', {}, date+' · '+s.label+' '+fmt(v.value, 2)+' '+signalUnit[s.id]+'，基线 '+fmt(v.baseline, 2)+'，'+zText(v.z)+(v.flag ? ' · 偏离' : ''));
+    });
+  }
+  svgNode(svg, 'text', {x:L, y:H-6, class:'grid-label'}, iso(start));
+  svgNode(svg, 'text', {x:W-R, y:H-6, 'text-anchor':'end', class:'grid-label'}, iso(end));
+  panel.append(svg);
+  const hits = crossDays.filter(d => d.count >= 2 && within(d.date, start, end)).reverse();
+  if (!hits.length) { panel.append(el('p', '当前范围内没有 2 项及以上信号同时偏离的日子。', 'chart-note')); return; }
+  simpleTable(panel, '同时偏离 ≥2 项的日子（倒序）；数值为当天值 / 个人基线。', ['日期', '偏离的信号'],
+    hits.map(d => [d.date, crossSignals.filter(s => obj(d.signals)[s.id] && d.signals[s.id].flag)
+      .map(s => s.label+' '+fmt(d.signals[s.id].value, 1)+' / '+fmt(d.signals[s.id].baseline, 1)+' '+signalUnit[s.id]).join('；')]));
+}
+function nightsPanel(start, end) {
+  const panel = crossPanel('夜间血氧 × 呼吸', '每晚按主睡眠窗口（入睡到醒来）汇总，日期为醒来日。手表血氧是稀疏采样，读数可能偏高或偏低；设备呼吸紊乱不是临床 AHI。三项是：睡眠中血氧采样低于 '+text(crossParams.low_spo2)+'％、呼吸紊乱高于个人基线、睡眠呼吸频率高于个人基线。');
+  const nights = crossNights.filter(n => within(n.date, start, end));
+  if (!nights.length) { panel.append(el('p', '当前范围内没有主睡眠记录。', 'empty')); return; }
+  tiles(panel, [[fmt(nights.length, 0), '主睡眠夜数'], [fmt(nights.filter(n => n.spo2_n).length, 0), '有睡眠中血氧采样的夜'],
+    [fmt(nights.filter(n => n.spo2_low > 0).length, 0), '睡眠中出现低于 '+text(crossParams.low_spo2)+'％ 的夜'], [fmt(nights.filter(n => n.flags >= 2).length, 0), '两项及以上同晚出现']]);
+  const notable = nights.filter(n => n.flags >= 1).reverse();
+  if (!notable.length) { panel.append(el('p', '当前范围内没有出现上述任何一项的夜晚。', 'chart-note')); return; }
+  simpleTable(panel, '出现至少一项的夜晚（倒序）。', ['醒来日期', '睡眠中血氧 · 采样 / 最低 / 低于阈值', '呼吸紊乱 · 相对基线', '睡眠呼吸频率 · 相对基线', '同晚项数'],
+    notable.map(n => [n.date, fmt(n.spo2_n, 0)+' 次 / '+(numeric(n.spo2_min) ? fmt(n.spo2_min, 0)+'％' : '—')+' / '+fmt(n.spo2_low, 0)+' 次',
+      (numeric(n.breathing) ? fmt(n.breathing, 1) : '—')+' · '+zText(n.breathing_z), (numeric(n.respiratory) ? fmt(n.respiratory, 1)+' 次／分' : '—')+' · '+zText(n.respiratory_z), String(n.flags)]));
+}
+function sleepWindowPanel(start, end, days) {
+  const panel = crossPanel('睡眠时间窗与规律', '每条竖线是一晚主睡眠，从入睡到醒来（报告时区）。只和自己比较，不设合格线；轮班、跨时区和照护婴儿会让这些数值失真。');
+  const sleep = metrics.find(m => m.id === 'sleep');
+  const nights = (sleep ? sleep.rows : []).filter(r => r.bedtime && r.wake && r.t >= start && r.t <= end);
+  if (!nights.length) { panel.append(el('p', '当前范围内没有带入睡与醒来时间的主睡眠。', 'empty')); return; }
+  const beds = nights.map(r => isoClock(r.bedtime)), wakes = nights.map(r => isoClock(r.wake));
+  const mids = nights.map((r, i) => { let w = wakes[i]; if (w < beds[i]) w += 24; return (beds[i]+w)/2; });
+  const free = mids.filter((_, i) => [0, 6].includes(new Date(nights[i].t).getUTCDay()));
+  const work = mids.filter((_, i) => ![0, 6].includes(new Date(nights[i].t).getUTCDay()));
+  const sri = (metrics.find(m => m.id === 'sri') || {rows:[]}).rows.filter(r => r.t >= start && r.t <= end).map(r => r.value);
+  const minutes = v => numeric(v) ? fmt(v*60, 0)+' 分钟' : '—';
+  const jet = free.length >= 4 && work.length >= 4 ? mean(free.map(v => ({value:v})))-mean(work.map(v => ({value:v}))) : null;
+  tiles(panel, [[minutes(sd(beds)), '入睡时间标准差'], [minutes(sd(wakes)), '醒来时间标准差'],
+    [numeric(jet) ? (jet >= 0 ? '晚 ' : '早 ')+fmt(Math.abs(jet)*60, 0)+' 分钟' : '—', '周六、日醒来的夜晚 · 睡眠中点相对其他夜晚'],
+    [sri.length >= 7 ? fmt(mean(sri.map(v => ({value:v}))), 0) : '—', '近似睡眠规律指数均值（100 = 每天完全一致）']]);
+  const lo = Math.floor(Math.min(...beds, 0)), hi = Math.ceil(Math.max(...wakes.map((w, i) => w < beds[i] ? w+24 : w), 9));
+  const W = 1000, H = 220, L = 52, R = 10, T = 10, B = 26, PH = H-T-B, PW = W-L-R;
+  const y = h => T+(h-lo)/(hi-lo)*PH, x = t => L+(t-start+DAY/2)/(days*DAY)*PW;
+  const svg = document.createElementNS(ns, 'svg'), c = 'var(--hue-sleep)';
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('class', 'cross-grid'); svg.setAttribute('role', 'img');
+  svg.setAttribute('aria-label', '每晚入睡到醒来的时间窗');
+  for (let h = Math.ceil(lo/2)*2; h <= hi; h += 2) {
+    svgNode(svg, 'line', {x1:L, x2:W-R, y1:y(h), y2:y(h), class:'grid'});
+    svgNode(svg, 'text', {x:L-8, y:y(h)+4, 'text-anchor':'end', class:'grid-label'}, clock(h));
+  }
+  const width = Math.max(Math.min(PW/days*.62, 12), 1.2);
+  nights.forEach((r, i) => {
+    const w = wakes[i] < beds[i] ? wakes[i]+24 : wakes[i];
+    const bar = svgNode(svg, 'rect', {x:x(r.t)-width/2, y:y(beds[i]), width, height:Math.max(1, y(w)-y(beds[i])), rx:Math.min(width/2, 4), fill:c, 'fill-opacity':.75});
+    svgNode(bar, 'title', {}, r.date+' 醒来 · '+clock(beds[i])+' — '+clock(w)+' · 实睡 '+fmt(r.value, 2)+' 小时');
+  });
+  svgNode(svg, 'text', {x:L, y:H-6, class:'grid-label'}, iso(start));
+  svgNode(svg, 'text', {x:W-R, y:H-6, 'text-anchor':'end', class:'grid-label'}, iso(end));
+  panel.append(svg);
+}
+function wearPanel(start, end) {
+  const panel = crossPanel('佩戴 × 步数', '用当天出现过心率采样的小时数粗略判断手表是否戴着，把“步数少”拆成“戴着但走得少”和“可能没戴”。不含导出末日；2,000 步只是描述性分组。');
+  const wearM = metrics.find(m => m.id === 'wear_hours'), steps = metrics.find(m => m.id === 'steps');
+  if (!wearM || !steps) { panel.append(el('p', '缺少心率采样或步数，无法交叉。', 'empty')); return; }
+  const wear = new Map(wearM.rows.map(r => [r.date, r.value]));
+  const rows = steps.rows.filter(r => r.t >= start && r.t <= end && r.t !== fullEnd);
+  const low = rows.filter(r => r.value < 2000), full = rows.filter(r => (wear.get(r.date) || 0) >= 12);
+  tiles(panel, [[fmt(low.filter(r => (wear.get(r.date) || 0) >= 12).length, 0), '步数 <2,000 · 心率覆盖 ≥12 小时'],
+    [fmt(low.filter(r => wear.has(r.date) && wear.get(r.date) < 12).length, 0), '步数 <2,000 · 覆盖 1—11 小时'],
+    [fmt(low.filter(r => !wear.has(r.date)).length, 0), '步数 <2,000 · 无心率采样'],
+    [full.length ? fmt(mean(full), 0) : '—', '覆盖 ≥12 小时日的步数均值（全部日 '+(rows.length ? fmt(mean(rows), 0) : '—')+'）']]);
+}
+const trendDefs = [['vo2', 3, '手表估算，验证研究中平均低于实验室测量约 6 mL/kg/min；只看变化。'], ['walking_hr', 5, ''], ['walking_speed', 5, ''],
+  ['step_length', 5, ''], ['double_support', 5, ''], ['walking_asymmetry', 5, ''], ['walking_steadiness', 5, ''], ['six_min_walk', 3, '设备估算，不替代标准化测试。']];
+function trendPanel(start, end) {
+  const panel = crossPanel('体能与步态 · 前后两半对比', '把当前筛选范围平分成前后两半，比较各自的日值中位数。只描述变化方向，不做等级或好坏判断；手机携带位置、行走场景和受伤都会影响步态估算。');
+  const mid = start+Math.floor((end-start)/DAY/2)*DAY, rows = [];
+  const found = {};
+  for (const [id, need, note] of trendDefs) {
+    const m = metrics.find(x => x.id === id); if (!m) continue;
+    const a = m.rows.filter(r => r.t >= start && r.t < mid).map(r => r.value), b = m.rows.filter(r => r.t >= mid && r.t <= end).map(r => r.value);
+    if (a.length < need || b.length < need) continue;
+    const before = median(a), after = median(b), delta = after-before;
+    found[id] = delta;
+    let extra = note;
+    if (id === 'walking_speed' && Math.abs(delta) >= .36) extra = '变化达到 0.1 m/s（0.36 km/h）；老年人研究中这个幅度与生存率有关。';
+    rows.push([m.label, fmt(before, 1)+' '+m.unit, fmt(after, 1)+' '+m.unit, (delta > 0 ? '+' : '')+fmt(delta, 2), a.length+' / '+b.length, extra || '—']);
+  }
+  if (!rows.length) { panel.append(el('p', '当前范围内没有前后两半都有足够记录的体能或步态指标；可放宽日期范围。', 'empty')); return; }
+  if (numeric(found.walking_hr) && numeric(found.walking_speed) && found.walking_hr <= -2 && found.walking_speed > -.1)
+    panel.append(el('p', '后半段步速未下降而步行心率更低，与心肺适能提高的方向一致；单看一项不能下结论。', 'chart-note'));
+  simpleTable(panel, '前半段 '+iso(start)+' 起，后半段 '+iso(mid)+' 起。', ['指标', '前半段中位数', '后半段中位数', '变化', '记录日（前 / 后）', '说明'], rows);
+}
+function renderCross(slices, start, end, days) {
+  $('charts').append(el('p', '交叉观察固定使用每个指标的默认来源，随日期筛选变化；全部只与自己的历史比较，不诊断疾病。', 'filter-status cross-intro'));
+  deviationPanel(start, end, days); nightsPanel(start, end); sleepWindowPanel(start, end, days); wearPanel(start, end); trendPanel(start, end);
+  const ids = categories.find(c => c.id === 'cross').ids;
+  const cards = slices.filter(s => ids.includes(s.m.id));
+  cards.sort((a, b) => ids.indexOf(a.m.id)-ids.indexOf(b.m.id));
+  for (const {m, rows} of cards) $('charts').append(metricCard(m, rows, start, end, days));
+}
 function metricCard(m, rows, start, end, days) {
   const card = el('article', undefined, 'card'+(rows.length ? '' : ' no-data'));
   card.style.setProperty('--c', hueOf(m));
@@ -581,7 +737,7 @@ function metricCard(m, rows, start, end, days) {
     card.append(el('p', '此范围无有效日值，缺失不等于零。', 'empty'));
     return card;
   }
-  const summary = summaryValue(m, rows), value = el('div', fmt(summary.value, m.id === 'steps' ? 0 : 1), 'metric-number');
+  const summary = summaryValue(m, rows), value = el('div', vfmt(m, summary.value, m.id === 'steps' ? 0 : 1), 'metric-number');
   value.append(el('small', m.unit));
   const row = el('div', undefined, 'metric-row'), delta = recentDelta(m, rows, start, end);
   row.append(value); if (delta) row.append(delta);
@@ -632,6 +788,7 @@ function render(start, end) {
   }
   drawTabs(slices);
   if (activeCategory === 'coverage') { renderCoverage(slices, days); return; }
+  if (activeCategory === 'cross') { renderCross(slices, start, end, days); return; }
   const category = categories.find(c => c.id === activeCategory);
   let shown = slices.filter(s => inCategory(s.m, category));
   if (activeCategory === 'overview') {

@@ -93,6 +93,61 @@
 - 步数：少于 2,000 步为描述性分组，不是“运动不足”的医学诊断。缺失佩戴信息时不能认定全天不活动。
 - 没有触发规则不表示健康无异常。未见通知不排除疾病。发现结合采样情境、症状和专业复测才有意义。
 
+## 交叉观察
+
+交叉观察由 `scripts/cross.py` 计算，只用每个指标的默认来源。设计原则是对所有成人通用：不读年龄、性别，不套人群阈值，每个信号只和**同一个人自己的近期基线**比较；输出只说明“哪几天哪些信号一起变了”，不推断病因。
+
+### 个人基线与偏离
+
+- 基线：当天之前第 3—30 天（共 28 天）的中位数。跳过最近 2 天，是为了让持续数天的变化不会立刻被自己的基线吸收。基线少于 14 天时不计算。
+- 偏离：`(当天值 − 基线) / 离散度`，离散度为 1.4826×MAD（中位数绝对偏差），并设每个信号的最小值，避免极平稳的基线把测量噪声放大成偏离：静息心率 1.5 次／分、HRV 4 ms、呼吸频率 0.4 次／分、腕温 0.15 ℃、主睡眠 0.33 小时、呼吸紊乱 1.0。达到 2 倍才计为偏离。
+- 只看研究关心的方向：静息心率、睡眠呼吸频率、腕温看升高，HRV 看降低，睡眠时长两个方向都看。
+- 呼吸频率、腕温优先用主睡眠窗口（入睡到醒来）内的采样；呼吸紊乱和腕温每晚一个值，时间戳可能略在睡眠区间外，因此前后放宽 2 小时匹配。
+
+### 1．多信号同时偏离
+
+同一天 2 项及以上信号偏离，记为“同时偏离日”；相隔不超过 2 天的合并为一段。最近一段在数据末日前 14 天内时列为“关注线索”，否则为“记录观察”。
+
+依据：可穿戴设备研究把静息心率、睡眠、活动、呼吸频率与个人基线比较。DETECT 研究中，单独的静息心率变化区分新冠阳性的能力很弱（AUC 0.52），睡眠（0.68）、活动（0.69）更好，传感器数据合并后 0.72，加上症状 0.80；Alavi 等以夜间静息心率的个人基线触发提醒，并报告压力、饮酒、旅行等非感染事件同样会触发。因此本报告只呈现“几项一起变了”，并在说明中列出这些常见非疾病原因。
+
+### 2．夜间血氧 × 呼吸
+
+每晚按主睡眠窗口汇总，日期为醒来日：睡眠中的血氧采样数、最低值、低于 90％ 的次数，设备呼吸紊乱及其相对个人基线的偏离，睡眠中呼吸频率的中位数及偏离。三项（血氧 <90％、呼吸紊乱偏高、呼吸频率偏高）中同一晚出现 2 项及以上时列为“关注线索”。
+
+边界：手表血氧在验证研究中低氧时误差仍在可接受范围（RMSD ≤4％），但有偏高倾向；采样稀疏，不能计算 ODI、AHI 或低氧时长。Apple 呼吸紊乱由加速度计测得，按 30 天内至少 10 晚评估，FDA 510(k) 文件给出的灵敏度 66.3％、特异度 98.5％；未收到通知不能排除睡眠呼吸暂停。
+
+### 3．睡眠规律
+
+- 入睡、醒来时间的标准差，睡眠中点的标准差；周六、周日醒来的夜晚与其他夜晚的睡眠中点差（社交时差的近似，不知道个人的工作日安排）。
+- 近似睡眠规律指数（SRI）：在相邻两个“中午到次日中午”的窗口中，同一时刻都睡着或都醒着的比例换算到 −100—100。研究中的 SRI 用全天睡眠／清醒状态逐时段比较；这里只用主睡眠，午睡算作清醒，跨越中午的睡眠被截断，因此只适合看自己的变化，不能与研究队列的数值直接比较。
+- 依据：Windred 等基于英国生物银行 60,977 人、超过 1,000 万小时的加速度计数据，发现睡眠规律性对全因死亡的预测力强于睡眠时长（队列 SRI 中位数 81.0）。本报告不设合格线。
+
+### 4．佩戴 × 步数
+
+用当天出现过心率采样的小时数粗略判断手表是否佩戴，把少于 2,000 步的日子拆成：覆盖 ≥12 小时（大概率戴着、确实走得少）、1—11 小时、无心率采样（可能没戴表）。这只是佩戴线索，手机步数与手表佩戴无关，不能据此补零或删数据。
+
+### 5．体能与步态趋势
+
+固定解读比较“前 90 天”与“最近 90 天”的中位数；交叉观察页把当前筛选范围平分成前后两半比较。只描述方向，不分级：
+
+- 心肺适能是设备估算，验证研究中 Apple Watch 平均低估约 6.07 mL/kg/min，一致性界限宽，所以只看变化。步速未降而步行平均心率下降至少 2 次／分时，提示与体能提高方向一致。
+- 步行速度下降至少 0.36 km/h（0.1 m/s），且最近 30 天仍低于前期时列出。Studenski 等在 65 岁以上 34,485 人中发现，步速每 0.1 m/s 的差异与生存率显著相关；这个幅度的证据来自老年人，年轻人只作个人变化参考。同时下降的步态指标达到 3 项时列为“关注线索”。
+
+### 资料核验
+
+以上数字于 2026-10-30 逐篇核对原文：
+
+- Quer G, et al. Wearable sensor data and self-reported symptoms for COVID-19 detection. *Nat Med* 2021;27:73–77. https://pubmed.ncbi.nlm.nih.gov/33122860/
+- Alavi A, et al. Real-time alerting system for COVID-19 and other stress events using wearable data. *Nat Med* 2022;28:175–184. https://pubmed.ncbi.nlm.nih.gov/34845389/
+- Natarajan A, et al. Measurement of respiratory rate using wearable devices and applications to COVID-19 detection. *npj Digit Med* 2021;4:136. https://pmc.ncbi.nlm.nih.gov/articles/PMC8443549/
+- Windred DP, et al. Sleep regularity is a stronger predictor of mortality risk than sleep duration. *Sleep* 2024;47:zsad253. https://pubmed.ncbi.nlm.nih.gov/37738616/
+- Apple. Estimating Breathing Disturbances and Sleep Apnea Risk from Apple Watch, 2024；Apple 支持文章 120031；FDA 510(k) K240929。https://support.apple.com/120031
+- Walzel S, et al. Evaluation of leading smartwatches for the detection of hypoxemia. *Sensors* 2023;23:9164. https://pubmed.ncbi.nlm.nih.gov/38005550/
+- Jiang Y, et al. Performance of wearable pulse oximetry during controlled hypoxia induction. *JMIR Form Res* 2026;10:e85253. https://pubmed.ncbi.nlm.nih.gov/41894520/
+- Lambe R, et al. Investigating the accuracy of Apple Watch VO2 max measurements. *PLoS One* 2025;20:e0323741. https://pubmed.ncbi.nlm.nih.gov/40373042/
+- Studenski S, et al. Gait speed and survival in older adults. *JAMA* 2011;305:50–58. https://pubmed.ncbi.nlm.nih.gov/21205966/
+- Apple 支持文章 102674（腕温以约 5 晚建立个人基线，显示相对基线的变化）。https://support.apple.com/102674
+
 ## 隐私与资源
 
 报告包含聚合健康趋势和可能的低值时间，即使源名称匿名化仍是私人数据。默认输出权限为仅文件所有者读写。不要发送到公开图床、在线 HTML 预览器或公开仓库。
