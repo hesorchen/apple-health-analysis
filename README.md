@@ -13,28 +13,34 @@
 
 <p align="center"><a href="#快速开始">快速开始</a> · <a href="#能做什么">能做什么</a> · <a href="#重要口径">重要口径</a> · <a href="references/methodology.md">方法与局限</a> · <a href="SKILL.md">Skill 工作流</a></p>
 
-<p align="center"><a href="docs/screenshots/overview-light.png"><img src="docs/screenshots/overview-light.png" width="1000" alt="健康看板概览 · 固定范围线索、指标卡与趋势小图"></a></p>
-<p align="center">健康看板概览 · 固定范围线索、日期与来源筛选、指标卡与趋势图</p>
+<p align="center"><a href="docs/screenshots/overview-light.png"><img src="docs/screenshots/overview-light.png" width="1000" alt="健康看板概览 · 指标卡、日值与 7 日均线"></a></p>
+<p align="center">健康看板概览 · 带趋势小图与近 7 天对比的指标卡，日值细线叠加 7 日均线，按分类配色</p>
 
 <details>
-<summary>更多截图：深色主题、证据卡、睡眠口径、数据覆盖与移动端</summary>
+<summary>更多截图：深色主题、活动与睡眠分类、数据覆盖、解读与方法、移动端</summary>
 
 <table align="center">
 <tr>
 <td align="center"><a href="docs/screenshots/overview-dark.png"><img src="docs/screenshots/overview-dark.png" width="500" alt="深色主题"></a></td>
-<td align="center"><a href="docs/screenshots/evidence.png"><img src="docs/screenshots/evidence.png" width="500" alt="展开的证据与边界"></a></td>
+<td align="center"><a href="docs/screenshots/activity.png"><img src="docs/screenshots/activity.png" width="500" alt="活动与训练分类"></a></td>
 </tr>
 <tr>
 <td align="center">深色主题</td>
-<td align="center">证据与边界 · 记录事实、行动建议与局限分开写</td>
+<td align="center">活动与训练 · 步数、锻炼、能量与站立</td>
 </tr>
 <tr>
 <td align="center"><a href="docs/screenshots/sleep-details.png"><img src="docs/screenshots/sleep-details.png" width="500" alt="睡眠分类与口径说明"></a></td>
 <td align="center"><a href="docs/screenshots/coverage.png"><img src="docs/screenshots/coverage.png" width="500" alt="数据覆盖页"></a></td>
 </tr>
 <tr>
-<td align="center">睡眠分类 · 口径说明与日表；缺失分期显示为“暂无记录”</td>
+<td align="center">睡眠 · 展开口径说明；没有记录的分期排在最后</td>
 <td align="center">数据覆盖 · 每项指标的有记录日、首末日与实际来源</td>
+</tr>
+<tr>
+<td align="center" colspan="2"><a href="docs/screenshots/about.png"><img src="docs/screenshots/about.png" width="1000" alt="解读与方法"></a></td>
+</tr>
+<tr>
+<td align="center" colspan="2">解读与方法 · 固定范围的观察、完整导出清单与局限，放在图表之后</td>
 </tr>
 </table>
 
@@ -61,7 +67,7 @@
 |---|---|
 | **直接读导出** | 读取 Apple Health 的 ZIP 或 XML，不必解压整个压缩包 |
 | **覆盖主要指标** | 睡眠与分期、心率、HRV、血氧、呼吸、活动、站立、训练、步态与移动能力、声音采样和身体测量；未支持的类型保留目录计数 |
-| **图表优先的单文件看板** | 主题导航、统一日期与来源筛选、趋势图、悬浮和键盘读数；解读、方法和日表按需展开 |
+| **图表优先的单文件看板** | 分类导航、吸顶的日期与来源筛选、日值叠加 7 日均线、指标卡趋势小图与近 7 天对比、悬浮和键盘读数；解读与方法放在图表之后 |
 | **来源独立处理** | 手机长期历史与手表近期数据可切换查看，不互相覆盖，也不把步数直接相加 |
 | **数据覆盖如实标注** | 区分扫描数、有效处理数、默认来源数与类型支持范围，不把文件记录数当成医学覆盖率 |
 | **低值不被掩盖** | 单独展示每日最低血氧采样，避免被中位数掩盖；不推断低氧持续时间 |
