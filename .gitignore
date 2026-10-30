@@ -1,0 +1,20 @@
+# Never commit real exports, reports, logs, or local configuration.
+__pycache__/
+*.py[cod]
+.venv/
+.env*
+*.zip
+*.xml
+*.gpx
+*.json
+*.html
+*.png
+*.jpg
+*.log
+private/
+reports/
+output/
+artifacts/
+.DS_Store
+# Only this explicitly synthetic, generated demo may be published.
+!examples/demo.html
