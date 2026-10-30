@@ -16,5 +16,6 @@ reports/
 output/
 artifacts/
 .DS_Store
-# Only this explicitly synthetic, generated demo may be published.
+# Only this explicitly synthetic, generated demo and its screenshots may be published.
 !examples/demo.html
+!docs/screenshots/*.png
